@@ -5,8 +5,8 @@
  * Requires GL_KHR_shader_subgroup extension.
  */
 
-#version 450
-#extension GL_KHR_shader_subgroup_arithmetic : enable
+#version 460
+#extension GL_KHR_shader_subgroup_arithmetic : require
 
 layout(local_size_x = 256) in;
 

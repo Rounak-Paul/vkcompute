@@ -11,10 +11,11 @@
  * - Performance benefits of compile-time constants
  */
 
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
+
 
 #include "vk_init.h"
 #include "vk_utils.h"
@@ -22,11 +23,6 @@
 
 #define ARRAY_SIZE (256 * 1024)  // 256K elements
 
-static double get_time_ms(void) {
-    struct timespec ts;
-    clock_gettime(CLOCK_MONOTONIC, &ts);
-    return ts.tv_sec * 1000.0 + ts.tv_nsec / 1000000.0;
-}
 
 // Specialization constant IDs (must match shader)
 #define SPEC_WORKGROUP_SIZE_ID  0
@@ -229,10 +225,10 @@ int main(int argc, char* argv[]) {
             .layout = pipeline_layout
         };
         
-        double start = get_time_ms();
+        double start = vkc_get_time_ms();
         VK_CHECK(vkCreateComputePipelines(ctx.device, VK_NULL_HANDLE, 1, 
                                           &pipeline_info, NULL, &pipelines[i]));
-        double elapsed = get_time_ms() - start;
+        double elapsed = vkc_get_time_ms() - start;
         
         printf("  Created: %s (%.2f ms)\n", configs[i].name, elapsed);
     }
@@ -251,7 +247,7 @@ int main(int argc, char* argv[]) {
         .flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT
     };
     
-    float* result = malloc(buffer_size);
+    float* output_result = malloc(buffer_size);
     float scale = 2.0f;
     
     for (int i = 0; i < num_configs; i++) {
@@ -272,7 +268,7 @@ int main(int argc, char* argv[]) {
         
         // Benchmark
         int iterations = 100;
-        double start = get_time_ms();
+        double start = vkc_get_time_ms();
         
         for (int j = 0; j < iterations; j++) {
             VK_CHECK(vkResetCommandBuffer(cmd, 0));
@@ -286,7 +282,7 @@ int main(int argc, char* argv[]) {
             VK_CHECK(vkc_submit_and_wait(&ctx, cmd));
         }
         
-        double elapsed = get_time_ms() - start;
+        double elapsed = vkc_get_time_ms() - start;
         double per_iter = elapsed / iterations;
         double throughput = (ARRAY_SIZE * sizeof(float) * 3) / (per_iter / 1000.0) / (1024.0 * 1024.0 * 1024.0);
         
@@ -294,7 +290,7 @@ int main(int argc, char* argv[]) {
         printf("    Time: %.3f ms/iter, Throughput: %.2f GB/s\n", per_iter, throughput);
         
         // Verify one result
-        VK_CHECK(vkc_download_buffer(&ctx, &buf_c, result, buffer_size));
+        vkc_download_buffer(&ctx, &buf_c, output_result, buffer_size);
         float expected;
         switch (configs[i].operation) {
             case OP_ADD:      expected = data_a[0] + data_b[0]; break;
@@ -303,7 +299,7 @@ int main(int argc, char* argv[]) {
             default:          expected = 0; break;
         }
         printf("    Verify: result[0] = %.1f (expected %.1f) %s\n", 
-               result[0], expected, result[0] == expected ? "✓" : "✗");
+               output_result[0], expected, output_result[0] == expected ? "✓" : "✗");
     }
     
     // ========================================================================
@@ -326,14 +322,14 @@ int main(int argc, char* argv[]) {
         VK_CHECK(vkEndCommandBuffer(cmd));
         VK_CHECK(vkc_submit_and_wait(&ctx, cmd));
         
-        VK_CHECK(vkc_download_buffer(&ctx, &buf_c, result, buffer_size));
-        printf("  %s: result[5] = %.1f\n", configs[i].name, result[5]);
+        vkc_download_buffer(&ctx, &buf_c, output_result, buffer_size);
+        printf("  %s: result[5] = %.1f\n", configs[i].name, output_result[5]);
     }
     
     // Cleanup
     free(data_a);
     free(data_b);
-    free(result);
+    free(output_result);
     
     for (int i = 0; i < num_configs; i++) {
         if (pipelines[i] != VK_NULL_HANDLE) {

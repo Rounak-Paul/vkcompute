@@ -12,10 +12,11 @@
  * - Flushing and invalidating non-coherent memory
  */
 
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
+
 
 #include "vk_init.h"
 #include "vk_utils.h"
@@ -24,11 +25,6 @@
 #define ARRAY_SIZE 1024
 #define LARGE_BLOCK_SIZE (16 * 1024 * 1024)  // 16 MB
 
-static double get_time_ms(void) {
-    struct timespec ts;
-    clock_gettime(CLOCK_MONOTONIC, &ts);
-    return ts.tv_sec * 1000.0 + ts.tv_nsec / 1000000.0;
-}
 
 // Print detailed memory properties
 static void print_memory_details(VkPhysicalDevice device) {
@@ -346,11 +342,11 @@ int main(int argc, char* argv[]) {
         VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
         &coherent_buf));
     
-    double start = get_time_ms();
+    double start = vkc_get_time_ms();
     for (int i = 0; i < 10; i++) {
         VK_CHECK(vkc_upload_buffer(&ctx, &coherent_buf, test_data, test_size));
     }
-    double coherent_time = (get_time_ms() - start) / 10.0;
+    double coherent_time = (vkc_get_time_ms() - start) / 10.0;
     printf("Host-visible coherent: %.2f ms per 4MB upload (%.2f GB/s)\n",
            coherent_time, (test_size / (1024.0 * 1024.0 * 1024.0)) / (coherent_time / 1000.0));
     

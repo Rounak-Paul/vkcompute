@@ -11,10 +11,11 @@
  * - Multiple queue submission patterns
  */
 
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
+
 
 #include "vk_init.h"
 #include "vk_utils.h"
@@ -23,11 +24,6 @@
 #define ARRAY_SIZE 1024
 #define NUM_ITERATIONS 5
 
-static double get_time_ms(void) {
-    struct timespec ts;
-    clock_gettime(CLOCK_MONOTONIC, &ts);
-    return ts.tv_sec * 1000.0 + ts.tv_nsec / 1000000.0;
-}
 
 int main(int argc, char* argv[]) {
     (void)argc; (void)argv;
@@ -138,7 +134,7 @@ int main(int argc, char* argv[]) {
     
     // Submit work and wait with fence
     printf("Submitting work and waiting with fence...\n");
-    double start = get_time_ms();
+    double start = vkc_get_time_ms();
     
     VK_CHECK(vkBeginCommandBuffer(cmd, &begin_info));
     vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline);
@@ -159,7 +155,7 @@ int main(int argc, char* argv[]) {
     printf("  Immediate check: %s\n", wait_result == VK_SUCCESS ? "Complete" : "Not ready");
     
     VK_CHECK(vkWaitForFences(ctx.device, 1, &fence, VK_TRUE, UINT64_MAX));
-    printf("  Fence signaled after %.2f ms\n", get_time_ms() - start);
+    printf("  Fence signaled after %.2f ms\n", vkc_get_time_ms() - start);
     
     VK_CHECK(vkc_download_buffer(&ctx, &buf_a, data, buffer_size));
     printf("  Result: data[0] = %.0f (was 0, incremented by 1)\n", data[0]);
@@ -205,10 +201,10 @@ int main(int argc, char* argv[]) {
     
     VK_CHECK(vkEndCommandBuffer(cmd));
     
-    start = get_time_ms();
+    start = vkc_get_time_ms();
     VK_CHECK(vkQueueSubmit(ctx.compute_queue, 1, &submit_info, fence));
     VK_CHECK(vkWaitForFences(ctx.device, 1, &fence, VK_TRUE, UINT64_MAX));
-    printf("  %d chained dispatches completed in %.2f ms\n", NUM_ITERATIONS, get_time_ms() - start);
+    printf("  %d chained dispatches completed in %.2f ms\n", NUM_ITERATIONS, vkc_get_time_ms() - start);
     
     VK_CHECK(vkc_download_buffer(&ctx, &buf_a, data, buffer_size));
     printf("  Result: data[0] = %.0f (expected %d)\n", data[0], NUM_ITERATIONS);
@@ -301,7 +297,7 @@ int main(int argc, char* argv[]) {
     
     // Record and submit 3 independent operations
     printf("Submitting 3 independent operations...\n");
-    start = get_time_ms();
+    start = vkc_get_time_ms();
     
     for (int i = 0; i < 3; i++) {
         VK_CHECK(vkBeginCommandBuffer(cmds[i], &begin_info));
@@ -335,7 +331,7 @@ int main(int argc, char* argv[]) {
     
     // Wait for all fences
     VK_CHECK(vkWaitForFences(ctx.device, 3, fences, VK_TRUE, UINT64_MAX));
-    printf("  All completed in %.2f ms\n", get_time_ms() - start);
+    printf("  All completed in %.2f ms\n", vkc_get_time_ms() - start);
     
     VK_CHECK(vkc_download_buffer(&ctx, &buf_a, result_a, buffer_size));
     VK_CHECK(vkc_download_buffer(&ctx, &buf_b, result_b, buffer_size));

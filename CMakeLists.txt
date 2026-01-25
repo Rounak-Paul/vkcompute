@@ -119,10 +119,11 @@ function(compile_shaders TARGET_NAME SHADER_DIR OUTPUT_DIR)
         set(SPIRV_OUTPUT "${OUTPUT_DIR}/${SHADER_NAME}.spv")
         
         if(SHADER_COMPILER_NAME STREQUAL "glslc")
+            # Use --target-env=vulkan1.2 for SPIR-V 1.5 (needed for subgroups)
             add_custom_command(
                 OUTPUT ${SPIRV_OUTPUT}
                 COMMAND ${CMAKE_COMMAND} -E make_directory ${OUTPUT_DIR}
-                COMMAND ${SHADER_COMPILER} ${SHADER} -o ${SPIRV_OUTPUT}
+                COMMAND ${SHADER_COMPILER} --target-env=vulkan1.2 ${SHADER} -o ${SPIRV_OUTPUT}
                 DEPENDS ${SHADER}
                 COMMENT "Compiling shader: ${SHADER_NAME}"
             )
@@ -130,7 +131,7 @@ function(compile_shaders TARGET_NAME SHADER_DIR OUTPUT_DIR)
             add_custom_command(
                 OUTPUT ${SPIRV_OUTPUT}
                 COMMAND ${CMAKE_COMMAND} -E make_directory ${OUTPUT_DIR}
-                COMMAND ${SHADER_COMPILER} -V ${SHADER} -o ${SPIRV_OUTPUT}
+                COMMAND ${SHADER_COMPILER} -V --target-env vulkan1.2 ${SHADER} -o ${SPIRV_OUTPUT}
                 DEPENDS ${SHADER}
                 COMMENT "Compiling shader: ${SHADER_NAME}"
             )

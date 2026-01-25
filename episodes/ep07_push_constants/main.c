@@ -11,11 +11,12 @@
  * - Performance comparison with uniform buffers
  */
 
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include <time.h>
+
 
 #include "vk_init.h"
 #include "vk_utils.h"
@@ -24,11 +25,6 @@
 #define ARRAY_SIZE 1024
 #define NUM_ITERATIONS 1000
 
-static double get_time_ms(void) {
-    struct timespec ts;
-    clock_gettime(CLOCK_MONOTONIC, &ts);
-    return ts.tv_sec * 1000.0 + ts.tv_nsec / 1000000.0;
-}
 
 // Push constant structure - must match shader
 typedef struct {
@@ -282,7 +278,7 @@ int main(int argc, char* argv[]) {
     printf("Running %d iterations...\n", NUM_ITERATIONS);
     
     // Push constants method
-    double start = get_time_ms();
+    double start = vkc_get_time_ms();
     
     for (int i = 0; i < NUM_ITERATIONS; i++) {
         PushConstants pc = {
@@ -304,7 +300,7 @@ int main(int argc, char* argv[]) {
         VK_CHECK(vkc_submit_and_wait(&ctx, cmd));
     }
     
-    double push_const_time = get_time_ms() - start;
+    double push_const_time = vkc_get_time_ms() - start;
     printf("Push constants: %.2f ms total (%.4f ms/iter)\n", 
            push_const_time, push_const_time / NUM_ITERATIONS);
     

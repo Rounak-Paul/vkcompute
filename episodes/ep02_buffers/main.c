@@ -12,10 +12,11 @@
  * - Coherent vs non-coherent memory
  */
 
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
+
 
 #include "vk_init.h"
 #include "vk_utils.h"
@@ -24,11 +25,6 @@
 #define ARRAY_SIZE (1024 * 1024)  // 1 million elements
 
 // Timer helper
-static double get_time_ms(void) {
-    struct timespec ts;
-    clock_gettime(CLOCK_MONOTONIC, &ts);
-    return ts.tv_sec * 1000.0 + ts.tv_nsec / 1000000.0;
-}
 
 // Print memory properties
 static void print_memory_info(VkPhysicalDevice device) {
@@ -98,9 +94,9 @@ int main(int argc, char* argv[]) {
         data[i] = (float)i;
     }
     
-    double start = get_time_ms();
+    double start = vkc_get_time_ms();
     VK_CHECK(vkc_upload_buffer(&ctx, &host_buffer, data, buffer_size));
-    double upload_time = get_time_ms() - start;
+    double upload_time = vkc_get_time_ms() - start;
     printf("  Upload time: %.2f ms (%.2f GB/s)\n", upload_time,
            (buffer_size / (1024.0 * 1024.0 * 1024.0)) / (upload_time / 1000.0));
     
@@ -135,9 +131,9 @@ int main(int argc, char* argv[]) {
     }
     
     // Upload to staging
-    start = get_time_ms();
+    start = vkc_get_time_ms();
     VK_CHECK(vkc_upload_buffer(&ctx, &staging_buffer, data, buffer_size));
-    double staging_upload = get_time_ms() - start;
+    double staging_upload = vkc_get_time_ms() - start;
     printf("  Staging upload: %.2f ms\n", staging_upload);
     
     // Copy from staging to device (GPU-side copy)
@@ -160,9 +156,9 @@ int main(int argc, char* argv[]) {
     
     VK_CHECK(vkEndCommandBuffer(cmd));
     
-    start = get_time_ms();
+    start = vkc_get_time_ms();
     VK_CHECK(vkc_submit_and_wait(&ctx, cmd));
-    double copy_time = get_time_ms() - start;
+    double copy_time = vkc_get_time_ms() - start;
     printf("  GPU copy time: %.2f ms (%.2f GB/s)\n", copy_time,
            (buffer_size / (1024.0 * 1024.0 * 1024.0)) / (copy_time / 1000.0));
     
@@ -258,9 +254,9 @@ int main(int argc, char* argv[]) {
     
     VK_CHECK(vkEndCommandBuffer(cmd));
     
-    start = get_time_ms();
+    start = vkc_get_time_ms();
     VK_CHECK(vkc_submit_and_wait(&ctx, cmd));
-    double compute_time = get_time_ms() - start;
+    double compute_time = vkc_get_time_ms() - start;
     printf("  Compute time: %.2f ms\n", compute_time);
     
     // ========================================================================
@@ -274,29 +270,29 @@ int main(int argc, char* argv[]) {
     vkCmdCopyBuffer(cmd, device_buffer.buffer, staging_buffer.buffer, 1, &copy_region);
     VK_CHECK(vkEndCommandBuffer(cmd));
     
-    start = get_time_ms();
+    start = vkc_get_time_ms();
     VK_CHECK(vkc_submit_and_wait(&ctx, cmd));
-    double readback_copy = get_time_ms() - start;
+    double readback_copy = vkc_get_time_ms() - start;
     printf("  GPU readback copy: %.2f ms\n", readback_copy);
     
-    float* result = malloc(buffer_size);
-    start = get_time_ms();
-    VK_CHECK(vkc_download_buffer(&ctx, &staging_buffer, result, buffer_size));
-    double download_time = get_time_ms() - start;
+    float* output_result = malloc(buffer_size);
+    start = vkc_get_time_ms();
+    vkc_download_buffer(&ctx, &staging_buffer, output_result, buffer_size);
+    double download_time = vkc_get_time_ms() - start;
     printf("  Download time: %.2f ms\n", download_time);
     
     // Verify results (square of input)
     printf("\n=== Verification ===\n");
     printf("First 5 values:\n");
     for (int i = 0; i < 5; i++) {
-        printf("  %d² = %.0f (expected %.0f)\n", i, result[i], (float)(i * i));
+        printf("  %d² = %.0f (expected %.0f)\n", i, output_result[i], (float)(i * i));
     }
     
     bool success = true;
     for (int i = 0; i < ARRAY_SIZE; i++) {
         float expected = (float)i * (float)i;
-        if (result[i] != expected) {
-            printf("ERROR at %d: got %.0f, expected %.0f\n", i, result[i], expected);
+        if (output_result[i] != expected) {
+            printf("ERROR at %d: got %.0f, expected %.0f\n", i, output_result[i], expected);
             success = false;
             break;
         }
@@ -308,7 +304,7 @@ int main(int argc, char* argv[]) {
     
     // Cleanup
     free(data);
-    free(result);
+    free(output_result);
     vkDestroyPipeline(ctx.device, pipeline, NULL);
     vkDestroyPipelineLayout(ctx.device, pipeline_layout, NULL);
     vkDestroyDescriptorPool(ctx.device, desc_pool, NULL);

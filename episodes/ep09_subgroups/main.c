@@ -12,10 +12,11 @@
  * - Performance benefits
  */
 
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
+
 
 #include "vk_init.h"
 #include "vk_utils.h"
@@ -23,11 +24,6 @@
 
 #define ARRAY_SIZE (256 * 1024)  // 256K elements
 
-static double get_time_ms(void) {
-    struct timespec ts;
-    clock_gettime(CLOCK_MONOTONIC, &ts);
-    return ts.tv_sec * 1000.0 + ts.tv_nsec / 1000000.0;
-}
 
 int main(int argc, char* argv[]) {
     (void)argc; (void)argv;
@@ -255,9 +251,9 @@ int main(int argc, char* argv[]) {
     
     VK_CHECK(vkEndCommandBuffer(cmd));
     
-    double start = get_time_ms();
+    double start = vkc_get_time_ms();
     VK_CHECK(vkc_submit_and_wait(&ctx, cmd));
-    double elapsed = get_time_ms() - start;
+    double elapsed = vkc_get_time_ms() - start;
     
     // Read result
     float result;
@@ -276,7 +272,7 @@ int main(int argc, char* argv[]) {
     printf("\n=== Benchmark ===\n");
     
     int iterations = 1000;
-    start = get_time_ms();
+    start = vkc_get_time_ms();
     
     for (int i = 0; i < iterations; i++) {
         VK_CHECK(vkResetCommandBuffer(cmd, 0));
@@ -304,7 +300,7 @@ int main(int argc, char* argv[]) {
         VK_CHECK(vkc_submit_and_wait(&ctx, cmd));
     }
     
-    elapsed = get_time_ms() - start;
+    elapsed = vkc_get_time_ms() - start;
     double per_iter = elapsed / iterations;
     double throughput = (ARRAY_SIZE * sizeof(float)) / (per_iter / 1000.0) / (1024.0 * 1024.0 * 1024.0);
     

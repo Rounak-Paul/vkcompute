@@ -12,10 +12,11 @@
  * - Common errors and how to fix them
  */
 
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
+
 
 #include "vk_init.h"
 #include "vk_utils.h"
@@ -30,11 +31,6 @@ PFN_vkCmdBeginDebugUtilsLabelEXT pfn_vkCmdBeginDebugUtilsLabelEXT = NULL;
 PFN_vkCmdEndDebugUtilsLabelEXT pfn_vkCmdEndDebugUtilsLabelEXT = NULL;
 PFN_vkCmdInsertDebugUtilsLabelEXT pfn_vkCmdInsertDebugUtilsLabelEXT = NULL;
 
-static double get_time_ms(void) {
-    struct timespec ts;
-    clock_gettime(CLOCK_MONOTONIC, &ts);
-    return ts.tv_sec * 1000.0 + ts.tv_nsec / 1000000.0;
-}
 
 // Set debug name for a Vulkan object
 static void set_object_name(VkDevice device, uint64_t object, 
@@ -316,9 +312,9 @@ int main(int argc, char* argv[]) {
     
     VK_CHECK(vkEndCommandBuffer(cmd));
     
-    double cpu_start = get_time_ms();
+    double cpu_start = vkc_get_time_ms();
     VK_CHECK(vkc_submit_and_wait(&ctx, cmd));
-    double cpu_time = get_time_ms() - cpu_start;
+    double cpu_time = vkc_get_time_ms() - cpu_start;
     
     // ========================================================================
     // Read timestamps

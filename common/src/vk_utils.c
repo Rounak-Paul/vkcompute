@@ -3,6 +3,14 @@
  * Utility functions implementation
  */
 
+#ifdef _WIN32
+    #define WIN32_LEAN_AND_MEAN
+    #include <windows.h>
+#else
+    #define _POSIX_C_SOURCE 199309L
+    #include <time.h>
+#endif
+
 #include "vk_utils.h"
 #include <string.h>
 
@@ -139,4 +147,28 @@ int32_t vkc_find_compute_queue_family(VkPhysicalDevice device) {
     
     // Return dedicated compute queue if available, otherwise any compute queue
     return (dedicated_compute >= 0) ? dedicated_compute : compute_family;
+}
+
+// ============================================================================
+// Cross-platform high-resolution timer
+// ============================================================================
+
+double vkc_get_time_ms(void) {
+#ifdef _WIN32
+    static LARGE_INTEGER frequency = {0};
+    static int initialized = 0;
+    
+    if (!initialized) {
+        QueryPerformanceFrequency(&frequency);
+        initialized = 1;
+    }
+    
+    LARGE_INTEGER counter;
+    QueryPerformanceCounter(&counter);
+    return (double)counter.QuadPart * 1000.0 / (double)frequency.QuadPart;
+#else
+    struct timespec ts;
+    clock_gettime(CLOCK_MONOTONIC, &ts);
+    return ts.tv_sec * 1000.0 + ts.tv_nsec / 1000000.0;
+#endif
 }

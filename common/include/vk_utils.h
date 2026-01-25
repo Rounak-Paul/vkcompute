@@ -92,6 +92,13 @@ static inline uint32_t vkc_align_up(uint32_t value, uint32_t alignment) {
     return (value + alignment - 1) & ~(alignment - 1);
 }
 
+// ============================================================================
+// Cross-platform timer
+// ============================================================================
+
+// Get high-resolution time in milliseconds
+double vkc_get_time_ms(void);
+
 #ifdef __cplusplus
 }
 #endif

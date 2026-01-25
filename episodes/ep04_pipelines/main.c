@@ -11,10 +11,11 @@
  * - Batch processing with different operations
  */
 
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
+
 
 #include "vk_init.h"
 #include "vk_utils.h"
@@ -22,11 +23,6 @@
 
 #define ARRAY_SIZE 1024
 
-static double get_time_ms(void) {
-    struct timespec ts;
-    clock_gettime(CLOCK_MONOTONIC, &ts);
-    return ts.tv_sec * 1000.0 + ts.tv_nsec / 1000000.0;
-}
 
 // Different operations we'll create pipelines for
 typedef enum {
@@ -141,10 +137,10 @@ int main(int argc, char* argv[]) {
             .layout = pipeline_layout
         };
         
-        double start = get_time_ms();
+        double start = vkc_get_time_ms();
         VK_CHECK(vkCreateComputePipelines(ctx.device, pipeline_cache, 1, 
                                           &pipeline_info, NULL, &pipelines[i]));
-        double elapsed = get_time_ms() - start;
+        double elapsed = vkc_get_time_ms() - start;
         total_time += elapsed;
         
         printf("  Pipeline '%s': %.2f ms\n", op_names[i], elapsed);
