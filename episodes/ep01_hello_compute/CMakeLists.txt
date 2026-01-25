@@ -8,7 +8,7 @@ add_executable(${EPISODE_NAME}
 )
 
 target_link_libraries(${EPISODE_NAME} PRIVATE
-    vkcompute_common
+    vkc
 )
 
 # Compile shaders

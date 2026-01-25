@@ -148,7 +148,7 @@ endfunction()
 # Common Library
 # ============================================================================
 
-add_subdirectory(common)
+add_subdirectory(vkc)
 
 # ============================================================================
 # Episodes - Each video gets its own executable

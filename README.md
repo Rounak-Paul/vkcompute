@@ -125,7 +125,7 @@ add_executable(${EPISODE_NAME}
 )
 
 target_link_libraries(${EPISODE_NAME} PRIVATE
-    vkcompute_common
+    vkc
 )
 
 set(SHADER_DIR ${CMAKE_CURRENT_SOURCE_DIR}/shaders)
