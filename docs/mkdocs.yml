@@ -7,6 +7,7 @@ repo_name: Rounak-Paul/vkcompute
 
 theme:
   name: material
+  font: false
   palette:
     - scheme: slate
       primary: deep purple
@@ -56,6 +57,12 @@ nav:
     - Chapter 08 - Specialization: chapters/ch08_specialization.md
     - Chapter 09 - Subgroups: chapters/ch09_subgroups.md
     - Chapter 10 - Debugging: chapters/ch10_debugging.md
+
+extra_css:
+  - stylesheets/fonts.css
+
+extra_javascript:
+  - javascripts/font-switcher.js
 
 extra:
   social:

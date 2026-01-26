@@ -94,22 +94,6 @@ Dispatch (vkCmdDispatch)
 - **Workgroup**: A group of invocations that can share memory and synchronize
 - **Dispatch**: The total number of workgroups to launch
 
-## Key Vulkan Objects
-
-Here's what you'll create in this series:
-
-| Object | Purpose | Created In |
-|--------|---------|------------|
-| `VkInstance` | Connection to Vulkan library | Chapter 1 |
-| `VkPhysicalDevice` | Represents a GPU | Chapter 1 |
-| `VkDevice` | Logical device for commands | Chapter 1 |
-| `VkQueue` | Submits work to GPU | Chapter 1 |
-| `VkBuffer` | GPU memory storage | Chapter 2 |
-| `VkDescriptorSet` | Binds resources to shaders | Chapter 3 |
-| `VkPipeline` | Compiled shader + state | Chapter 4 |
-| `VkFence` | CPU-GPU synchronization | Chapter 5 |
-| `VkCommandBuffer` | Records GPU commands | Chapter 5 |
-
 ## Compute Shaders (GLSL)
 
 Shaders are written in GLSL and compiled to SPIR-V:

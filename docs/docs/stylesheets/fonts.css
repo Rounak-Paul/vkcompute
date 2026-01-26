@@ -1,0 +1,112 @@
+/* Font imports from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=VT323&family=JetBrains+Mono:wght@400;700&family=Fira+Code:wght@400;700&family=IBM+Plex+Mono:wght@400;700&family=Roboto:wght@400;500;700&family=Inter:wght@400;500;700&family=Open+Sans:wght@400;600;700&family=Source+Sans+3:wght@400;600;700&family=Nunito:wght@400;600;700&family=Lato:wght@400;700&family=Roboto+Mono:wght@400;700&family=Source+Code+Pro:wght@400;700&display=swap');
+
+/* Font variables */
+:root {
+  --font-text: 'Space Mono', monospace;
+  --font-code: 'Space Mono', monospace;
+}
+
+/* Apply fonts */
+body {
+  font-family: var(--font-text) !important;
+}
+
+code, pre, .highlight, .codehilite {
+  font-family: var(--font-code) !important;
+}
+
+/* Font switcher styles */
+.font-switcher {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+}
+
+.font-switcher select {
+  background: var(--md-default-bg-color);
+  color: var(--md-default-fg-color);
+  border: 1px solid var(--md-default-fg-color--lighter);
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.font-switcher select:hover {
+  border-color: var(--md-accent-fg-color);
+}
+
+.font-switcher label {
+  opacity: 0.7;
+}
+
+/* Monospace fonts */
+body.font-space-mono {
+  --font-text: 'Space Mono', monospace;
+  --font-code: 'Space Mono', monospace;
+}
+
+body.font-vt323 {
+  --font-text: 'VT323', monospace;
+  --font-code: 'VT323', monospace;
+}
+
+body.font-jetbrains {
+  --font-text: 'JetBrains Mono', monospace;
+  --font-code: 'JetBrains Mono', monospace;
+}
+
+body.font-fira {
+  --font-text: 'Fira Code', monospace;
+  --font-code: 'Fira Code', monospace;
+}
+
+body.font-ibm-plex {
+  --font-text: 'IBM Plex Mono', monospace;
+  --font-code: 'IBM Plex Mono', monospace;
+}
+
+body.font-roboto-mono {
+  --font-text: 'Roboto Mono', monospace;
+  --font-code: 'Roboto Mono', monospace;
+}
+
+body.font-source-code {
+  --font-text: 'Source Code Pro', monospace;
+  --font-code: 'Source Code Pro', monospace;
+}
+
+/* Sans-serif fonts (with monospace code) */
+body.font-roboto {
+  --font-text: 'Roboto', sans-serif;
+  --font-code: 'Roboto Mono', monospace;
+}
+
+body.font-inter {
+  --font-text: 'Inter', sans-serif;
+  --font-code: 'JetBrains Mono', monospace;
+}
+
+body.font-open-sans {
+  --font-text: 'Open Sans', sans-serif;
+  --font-code: 'Source Code Pro', monospace;
+}
+
+body.font-source-sans {
+  --font-text: 'Source Sans 3', sans-serif;
+  --font-code: 'Source Code Pro', monospace;
+}
+
+body.font-nunito {
+  --font-text: 'Nunito', sans-serif;
+  --font-code: 'Fira Code', monospace;
+}
+
+body.font-lato {
+  --font-text: 'Lato', sans-serif;
+  --font-code: 'JetBrains Mono', monospace;
+}
