@@ -1,27 +1,20 @@
 /**
  * VKCompute - Episode 01: Hello Vulkan Compute
  * 
- * Your first Vulkan compute shader! We keep it simple:
- * A compute shader that doubles every value in an array.
+ * Introduction to Vulkan compute programming.
  * 
- * This episode focuses on the high-level flow:
- * 1. Initialize Vulkan
- * 2. Create buffers for input/output
- * 3. Run a compute shader
- * 4. Read back results
+ * This episode covers the basics:
+ * 1. What is Vulkan?
+ * 2. Creating a Vulkan instance
+ * 3. Selecting a GPU (physical device)
+ * 4. Creating a logical device with a compute queue
  * 
- * We use helper functions to hide the complexity - 
- * later episodes will dive into the details!
+ * No shaders yet - just getting Vulkan up and running!
  */
 
 #include <stdio.h>
 #include <stdlib.h>
-
-#include "vk_init.h"
-#include "vk_utils.h"
-#include "file_utils.h"
-
-#define ARRAY_SIZE 1024
+#include <vulkan/vulkan.h>
 
 int main(int argc, char* argv[]) {
     (void)argc;
@@ -32,122 +25,175 @@ int main(int argc, char* argv[]) {
     printf("==============================================\n\n");
     
     // ========================================================================
-    // Step 1: Initialize Vulkan
+    // Step 1: Create a Vulkan Instance
     // ========================================================================
-    // The vkc_init() helper creates a Vulkan instance, finds a GPU with
-    // compute capability, and sets up a logical device with a compute queue.
+    // The instance is our connection to the Vulkan library.
+    // We need to tell Vulkan about our application.
     
-    VkcContext ctx;
-    VkcConfig config = vkc_config_default();
-    config.app_name = "EP01 Hello Compute";
+    VkApplicationInfo app_info = {
+        .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
+        .pApplicationName = "EP01 Hello Compute",
+        .applicationVersion = VK_MAKE_VERSION(1, 0, 0),
+        .pEngineName = "No Engine",
+        .engineVersion = VK_MAKE_VERSION(1, 0, 0),
+        .apiVersion = VK_API_VERSION_1_2
+    };
     
-    if (vkc_init(&ctx, &config) != VK_SUCCESS) {
-        fprintf(stderr, "Failed to initialize Vulkan!\n");
+    // On macOS, we need the portability extension for MoltenVK
+#ifdef __APPLE__
+    const char* extensions[] = {
+        VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME
+    };
+    VkInstanceCreateInfo instance_info = {
+        .sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
+        .pApplicationInfo = &app_info,
+        .flags = VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR,
+        .enabledExtensionCount = 1,
+        .ppEnabledExtensionNames = extensions
+    };
+#else
+    VkInstanceCreateInfo instance_info = {
+        .sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
+        .pApplicationInfo = &app_info
+    };
+#endif
+    
+    VkInstance instance;
+    VkResult result = vkCreateInstance(&instance_info, NULL, &instance);
+    if (result != VK_SUCCESS) {
+        fprintf(stderr, "Failed to create Vulkan instance! Error: %d\n", result);
         return 1;
     }
-    
-    printf("Vulkan initialized successfully!\n");
-    vkc_print_device_info(ctx.physical_device);
+    printf("✓ Vulkan instance created\n");
     
     // ========================================================================
-    // Step 2: Prepare input data
+    // Step 2: Find a Physical Device (GPU)
     // ========================================================================
-    // We'll create an array of numbers [0, 1, 2, 3, ...] and double each one.
+    // Enumerate available GPUs and pick one that supports compute.
     
-    float input_data[ARRAY_SIZE];
-    for (int i = 0; i < ARRAY_SIZE; i++) {
-        input_data[i] = (float)i;
+    uint32_t device_count = 0;
+    vkEnumeratePhysicalDevices(instance, &device_count, NULL);
+    
+    if (device_count == 0) {
+        fprintf(stderr, "No GPUs with Vulkan support found!\n");
+        vkDestroyInstance(instance, NULL);
+        return 1;
     }
-    printf("\nInput: [0, 1, 2, 3, ... %d]\n", ARRAY_SIZE - 1);
+    printf("✓ Found %u GPU(s)\n", device_count);
     
-    // ========================================================================
-    // Step 3: Create GPU buffers
-    // ========================================================================
-    // Buffers are how we send data to and from the GPU.
-    // - Input buffer: holds our source data
-    // - Output buffer: where the shader writes results
+    VkPhysicalDevice* devices = malloc(device_count * sizeof(VkPhysicalDevice));
+    vkEnumeratePhysicalDevices(instance, &device_count, devices);
     
-    VkDeviceSize buffer_size = ARRAY_SIZE * sizeof(float);
+    // Print info about each GPU and pick the first one
+    VkPhysicalDevice physical_device = VK_NULL_HANDLE;
+    uint32_t compute_queue_family = UINT32_MAX;
     
-    VkcBuffer input_buffer, output_buffer;
-    
-    VK_CHECK(vkc_create_buffer(&ctx, buffer_size,
-        VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
-        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-        &input_buffer));
-    
-    VK_CHECK(vkc_create_buffer(&ctx, buffer_size,
-        VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
-        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-        &output_buffer));
-    
-    // Upload input data to GPU
-    VK_CHECK(vkc_upload_buffer(&ctx, &input_buffer, input_data, buffer_size));
-    printf("Created input and output buffers (%zu bytes each)\n", (size_t)buffer_size);
-    
-    // ========================================================================
-    // Step 4: Load and run the compute shader
-    // ========================================================================
-    // The shader is written in GLSL and compiled to SPIR-V.
-    // Our helper function handles all the pipeline setup internally.
-    
-    char* shader_path = vkc_path_relative_to_exe("shaders/ep01_hello_compute/double.comp.spv");
-    printf("Loading shader: %s\n", shader_path);
-    
-    printf("\nRunning compute shader...\n");
-    VK_CHECK(vkc_run_simple_compute(&ctx, shader_path, 
-                                     &input_buffer, &output_buffer, 
-                                     ARRAY_SIZE));
-    printf("Compute shader completed!\n");
-    free(shader_path);
-    
-    // ========================================================================
-    // Step 5: Read back and verify results  
-    // ========================================================================
-    
-    float output_data[ARRAY_SIZE];
-    VK_CHECK(vkc_download_buffer(&ctx, &output_buffer, output_data, buffer_size));
-    
-    printf("\n=== Results ===\n");
-    printf("First 10 values:\n");
-    for (int i = 0; i < 10; i++) {
-        printf("  input[%d] = %.0f  ->  output[%d] = %.0f\n", 
-               i, input_data[i], i, output_data[i]);
-    }
-    
-    // Verify all values are correct
-    int errors = 0;
-    for (int i = 0; i < ARRAY_SIZE; i++) {
-        float expected = input_data[i] * 2.0f;
-        if (output_data[i] != expected) {
-            if (errors < 5) {
-                printf("ERROR: output[%d] = %.0f, expected %.0f\n", 
-                       i, output_data[i], expected);
-            }
-            errors++;
+    for (uint32_t i = 0; i < device_count; i++) {
+        VkPhysicalDeviceProperties props;
+        vkGetPhysicalDeviceProperties(devices[i], &props);
+        
+        const char* device_type = "Unknown";
+        switch (props.deviceType) {
+            case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU:   device_type = "Discrete GPU"; break;
+            case VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU: device_type = "Integrated GPU"; break;
+            case VK_PHYSICAL_DEVICE_TYPE_CPU:            device_type = "CPU"; break;
+            default: break;
         }
+        
+        printf("\n  GPU %u: %s\n", i, props.deviceName);
+        printf("    Type: %s\n", device_type);
+        printf("    API Version: %u.%u.%u\n",
+               VK_VERSION_MAJOR(props.apiVersion),
+               VK_VERSION_MINOR(props.apiVersion),
+               VK_VERSION_PATCH(props.apiVersion));
+        
+        // Find a queue family that supports compute
+        uint32_t queue_family_count = 0;
+        vkGetPhysicalDeviceQueueFamilyProperties(devices[i], &queue_family_count, NULL);
+        
+        VkQueueFamilyProperties* queue_families = malloc(queue_family_count * sizeof(VkQueueFamilyProperties));
+        vkGetPhysicalDeviceQueueFamilyProperties(devices[i], &queue_family_count, queue_families);
+        
+        for (uint32_t j = 0; j < queue_family_count; j++) {
+            if (queue_families[j].queueFlags & VK_QUEUE_COMPUTE_BIT) {
+                printf("    Queue family %u: supports COMPUTE (%u queues)\n", 
+                       j, queue_families[j].queueCount);
+                if (physical_device == VK_NULL_HANDLE) {
+                    physical_device = devices[i];
+                    compute_queue_family = j;
+                }
+            }
+        }
+        free(queue_families);
     }
+    free(devices);
     
-    if (errors == 0) {
-        printf("\n✓ SUCCESS! All %d values doubled correctly.\n", ARRAY_SIZE);
-    } else {
-        printf("\n✗ FAILED: %d errors found\n", errors);
+    if (physical_device == VK_NULL_HANDLE) {
+        fprintf(stderr, "No GPU with compute support found!\n");
+        vkDestroyInstance(instance, NULL);
+        return 1;
     }
+    printf("\n✓ Selected GPU with compute queue family %u\n", compute_queue_family);
+    
+    // ========================================================================
+    // Step 3: Create a Logical Device
+    // ========================================================================
+    // The logical device is our interface to the GPU.
+    // We request a queue from the compute-capable queue family.
+    
+    float queue_priority = 1.0f;
+    VkDeviceQueueCreateInfo queue_info = {
+        .sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
+        .queueFamilyIndex = compute_queue_family,
+        .queueCount = 1,
+        .pQueuePriorities = &queue_priority
+    };
+    
+    VkDeviceCreateInfo device_info = {
+        .sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
+        .queueCreateInfoCount = 1,
+        .pQueueCreateInfos = &queue_info
+    };
+    
+    VkDevice device;
+    result = vkCreateDevice(physical_device, &device_info, NULL, &device);
+    if (result != VK_SUCCESS) {
+        fprintf(stderr, "Failed to create logical device! Error: %d\n", result);
+        vkDestroyInstance(instance, NULL);
+        return 1;
+    }
+    printf("✓ Logical device created\n");
+    
+    // ========================================================================
+    // Step 4: Get the Compute Queue
+    // ========================================================================
+    // Now we can retrieve the queue we requested.
+    
+    VkQueue compute_queue;
+    vkGetDeviceQueue(device, compute_queue_family, 0, &compute_queue);
+    printf("✓ Compute queue retrieved\n");
+    
+    // ========================================================================
+    // Done! We have a working Vulkan setup.
+    // ========================================================================
+    
+    printf("\n=== SUCCESS ===\n");
+    printf("Vulkan is initialized and ready for compute work!\n");
     
     // ========================================================================
     // Cleanup
     // ========================================================================
     
-    vkc_destroy_buffer(&ctx, &input_buffer);
-    vkc_destroy_buffer(&ctx, &output_buffer);
-    vkc_cleanup(&ctx);
+    vkDestroyDevice(device, NULL);
+    vkDestroyInstance(instance, NULL);
+    printf("\n✓ Cleanup complete\n");
     
     printf("\n=== What we learned ===\n");
-    printf("1. Initialize Vulkan with vkc_init()\n");
-    printf("2. Create buffers to hold GPU data\n");
-    printf("3. Run compute shaders on the GPU\n");
-    printf("4. Read results back to CPU\n");
-    printf("\nNext episode: Dive deeper into buffer types!\n");
+    printf("1. Create a Vulkan instance (our connection to Vulkan)\n");
+    printf("2. Enumerate and select a physical device (GPU)\n");
+    printf("3. Find a queue family that supports compute operations\n");
+    printf("4. Create a logical device with a compute queue\n");
+    printf("\nNext episode: Buffers - sending data to the GPU!\n");
     
     return 0;
 }

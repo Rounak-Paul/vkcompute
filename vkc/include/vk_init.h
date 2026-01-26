@@ -105,21 +105,6 @@ VkResult vkc_create_compute_pipeline(VkcContext* ctx,
                                      VkPipelineLayout layout,
                                      VkPipeline* pipeline);
 
-// ============================================================================
-// Simple compute runner (for Episode 01)
-// ============================================================================
-
-// Run a simple compute shader with input/output buffers
-// This is a convenience function that handles all the boilerplate:
-// - Loads shader, creates descriptors, pipeline, command buffer
-// - Dispatches compute work and waits for completion
-// - Cleans up all temporary resources
-VkResult vkc_run_simple_compute(VkcContext* ctx,
-                                const char* shader_path,
-                                VkcBuffer* input,
-                                VkcBuffer* output,
-                                uint32_t element_count);
-
 // Print device info (name, type, etc)
 void vkc_print_device_info(VkPhysicalDevice device);
 

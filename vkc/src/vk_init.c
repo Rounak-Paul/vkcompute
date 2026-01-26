@@ -68,10 +68,17 @@ static VkResult create_instance(VkcContext* ctx, const VkcConfig* config) {
     };
     
     // Extensions
-    const char* extensions[] = {
-        VK_EXT_DEBUG_UTILS_EXTENSION_NAME
-    };
-    uint32_t extension_count = config->enable_validation ? 1 : 0;
+    const char* extensions[8];
+    uint32_t extension_count = 0;
+    
+#ifdef __APPLE__
+    // macOS requires portability enumeration for MoltenVK
+    extensions[extension_count++] = VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME;
+#endif
+    
+    if (config->enable_validation) {
+        extensions[extension_count++] = VK_EXT_DEBUG_UTILS_EXTENSION_NAME;
+    }
     
     // Validation layers
     const char* layers[] = {
@@ -102,13 +109,18 @@ static VkResult create_instance(VkcContext* ctx, const VkcConfig* config) {
             VKC_LOG_INFO("Validation layers enabled");
         } else {
             VKC_LOG_WARN("Validation layer not found, continuing without validation");
-            extension_count = 0;
         }
     }
+    
+    VkInstanceCreateFlags flags = 0;
+#ifdef __APPLE__
+    flags |= VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
+#endif
     
     VkInstanceCreateInfo create_info = {
         .sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
         .pApplicationInfo = &app_info,
+        .flags = flags,
         .enabledExtensionCount = extension_count,
         .ppEnabledExtensionNames = extensions,
         .enabledLayerCount = layer_count,
@@ -222,11 +234,22 @@ static VkResult create_device(VkcContext* ctx) {
     
     VkPhysicalDeviceFeatures features = {0};
     
+    // Device extensions
+    const char* device_extensions[8];
+    uint32_t device_extension_count = 0;
+    
+#ifdef __APPLE__
+    // macOS requires portability subset for MoltenVK
+    device_extensions[device_extension_count++] = "VK_KHR_portability_subset";
+#endif
+    
     VkDeviceCreateInfo device_info = {
         .sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
         .queueCreateInfoCount = 1,
         .pQueueCreateInfos = &queue_info,
-        .pEnabledFeatures = &features
+        .pEnabledFeatures = &features,
+        .enabledExtensionCount = device_extension_count,
+        .ppEnabledExtensionNames = device_extensions
     };
     
     VK_CHECK_RETURN(vkCreateDevice(ctx->physical_device, &device_info, NULL, &ctx->device));
@@ -459,137 +482,4 @@ VkResult vkc_create_compute_pipeline(VkcContext* ctx,
     
     return vkCreateComputePipelines(ctx->device, VK_NULL_HANDLE, 1, 
                                     &pipeline_info, NULL, pipeline);
-}
-
-// ============================================================================
-// Simple compute runner (hides complexity for Episode 01)
-// ============================================================================
-
-VkResult vkc_run_simple_compute(VkcContext* ctx,
-                                const char* shader_path,
-                                VkcBuffer* input,
-                                VkcBuffer* output,
-                                uint32_t element_count) {
-    VkResult result = VK_SUCCESS;
-    
-    // Load shader
-    VkShaderModule shader;
-    result = vkc_load_shader(ctx, shader_path, &shader);
-    if (result != VK_SUCCESS) return result;
-    
-    // Create descriptor set layout (2 storage buffers: input + output)
-    VkDescriptorSetLayoutBinding bindings[2] = {
-        { .binding = 0, .descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
-          .descriptorCount = 1, .stageFlags = VK_SHADER_STAGE_COMPUTE_BIT },
-        { .binding = 1, .descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
-          .descriptorCount = 1, .stageFlags = VK_SHADER_STAGE_COMPUTE_BIT }
-    };
-    
-    VkDescriptorSetLayoutCreateInfo layout_info = {
-        .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
-        .bindingCount = 2, .pBindings = bindings
-    };
-    
-    VkDescriptorSetLayout desc_layout;
-    result = vkCreateDescriptorSetLayout(ctx->device, &layout_info, NULL, &desc_layout);
-    if (result != VK_SUCCESS) { vkDestroyShaderModule(ctx->device, shader, NULL); return result; }
-    
-    // Create pipeline layout
-    VkPipelineLayoutCreateInfo pipe_layout_info = {
-        .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
-        .setLayoutCount = 1, .pSetLayouts = &desc_layout
-    };
-    
-    VkPipelineLayout pipe_layout;
-    result = vkCreatePipelineLayout(ctx->device, &pipe_layout_info, NULL, &pipe_layout);
-    if (result != VK_SUCCESS) goto cleanup_desc_layout;
-    
-    // Create compute pipeline
-    VkPipeline pipeline;
-    result = vkc_create_compute_pipeline(ctx, shader, pipe_layout, &pipeline);
-    if (result != VK_SUCCESS) goto cleanup_pipe_layout;
-    
-    // Create descriptor pool
-    VkDescriptorPoolSize pool_size = { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 2 };
-    VkDescriptorPoolCreateInfo pool_info = {
-        .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
-        .maxSets = 1, .poolSizeCount = 1, .pPoolSizes = &pool_size
-    };
-    
-    VkDescriptorPool desc_pool;
-    result = vkCreateDescriptorPool(ctx->device, &pool_info, NULL, &desc_pool);
-    if (result != VK_SUCCESS) goto cleanup_pipeline;
-    
-    // Allocate descriptor set
-    VkDescriptorSetAllocateInfo alloc_info = {
-        .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
-        .descriptorPool = desc_pool, .descriptorSetCount = 1, .pSetLayouts = &desc_layout
-    };
-    
-    VkDescriptorSet desc_set;
-    result = vkAllocateDescriptorSets(ctx->device, &alloc_info, &desc_set);
-    if (result != VK_SUCCESS) goto cleanup_pool;
-    
-    // Update descriptor set with buffer info
-    VkDescriptorBufferInfo buf_infos[2] = {
-        { input->buffer, 0, VK_WHOLE_SIZE },
-        { output->buffer, 0, VK_WHOLE_SIZE }
-    };
-    
-    VkWriteDescriptorSet writes[2] = {
-        { .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET, .dstSet = desc_set,
-          .dstBinding = 0, .descriptorCount = 1, 
-          .descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, .pBufferInfo = &buf_infos[0] },
-        { .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET, .dstSet = desc_set,
-          .dstBinding = 1, .descriptorCount = 1,
-          .descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, .pBufferInfo = &buf_infos[1] }
-    };
-    vkUpdateDescriptorSets(ctx->device, 2, writes, 0, NULL);
-    
-    // Create command pool and buffer
-    VkCommandPool cmd_pool;
-    result = vkc_create_command_pool(ctx, &cmd_pool);
-    if (result != VK_SUCCESS) goto cleanup_pool;
-    
-    VkCommandBuffer cmd;
-    result = vkc_create_command_buffer(ctx, cmd_pool, &cmd);
-    if (result != VK_SUCCESS) goto cleanup_cmd_pool;
-    
-    // Record command buffer
-    VkCommandBufferBeginInfo begin_info = {
-        .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-        .flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT
-    };
-    
-    result = vkBeginCommandBuffer(cmd, &begin_info);
-    if (result != VK_SUCCESS) goto cleanup_cmd_pool;
-    
-    vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline);
-    vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_COMPUTE, pipe_layout,
-                            0, 1, &desc_set, 0, NULL);
-    
-    // Dispatch with workgroup size of 256 (standard choice)
-    uint32_t workgroup_count = vkc_div_ceil(element_count, 256);
-    vkCmdDispatch(cmd, workgroup_count, 1, 1);
-    
-    result = vkEndCommandBuffer(cmd);
-    if (result != VK_SUCCESS) goto cleanup_cmd_pool;
-    
-    // Submit and wait
-    result = vkc_submit_and_wait(ctx, cmd);
-    
-    // Cleanup (in reverse order)
-cleanup_cmd_pool:
-    vkDestroyCommandPool(ctx->device, cmd_pool, NULL);
-cleanup_pool:
-    vkDestroyDescriptorPool(ctx->device, desc_pool, NULL);
-cleanup_pipeline:
-    vkDestroyPipeline(ctx->device, pipeline, NULL);
-cleanup_pipe_layout:
-    vkDestroyPipelineLayout(ctx->device, pipe_layout, NULL);
-cleanup_desc_layout:
-    vkDestroyDescriptorSetLayout(ctx->device, desc_layout, NULL);
-    vkDestroyShaderModule(ctx->device, shader, NULL);
-    
-    return result;
 }
