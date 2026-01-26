@@ -1,0 +1,13 @@
+// Chapter 04: Square operation
+#version 450
+layout(local_size_x = 256) in;
+
+layout(set = 0, binding = 0) readonly buffer Input { float data[]; } input_buf;
+layout(set = 0, binding = 1) writeonly buffer Output { float data[]; } output_buf;
+layout(push_constant) uniform PushConstants { float value; };  // unused but keeps layout compatible
+
+void main() {
+    uint idx = gl_GlobalInvocationID.x;
+    float val = input_buf.data[idx];
+    output_buf.data[idx] = val * val;
+}

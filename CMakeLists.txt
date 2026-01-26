@@ -151,38 +151,38 @@ endfunction()
 add_subdirectory(vkc)
 
 # ============================================================================
-# Episodes - Each video gets its own executable
+# Chapters - Each video gets its own executable
 # ============================================================================
 
-# Episode 01: Hello Vulkan Compute
-add_subdirectory(episodes/ep01_hello_compute)
+# Chapter 01: Hello Vulkan Compute
+add_subdirectory(chapters/ch01_hello_compute)
 
-# Episode 02: Buffers - Device/host memory, staging
-add_subdirectory(episodes/ep02_buffers)
+# Chapter 02: Buffers - Device/host memory, staging
+add_subdirectory(chapters/ch02_buffers)
 
-# Episode 03: Descriptors - Sets, layouts, pools
-add_subdirectory(episodes/ep03_descriptors)
+# Chapter 03: Descriptors - Sets, layouts, pools
+add_subdirectory(chapters/ch03_descriptors)
 
-# Episode 04: Pipelines - Caching, management
-add_subdirectory(episodes/ep04_pipelines)
+# Chapter 04: Pipelines - Caching, management
+add_subdirectory(chapters/ch04_pipelines)
 
-# Episode 05: Synchronization - Fences, barriers
-add_subdirectory(episodes/ep05_synchronization)
+# Chapter 05: Synchronization - Fences, barriers
+add_subdirectory(chapters/ch05_synchronization)
 
-# Episode 06: Memory - Types, allocation strategies
-add_subdirectory(episodes/ep06_memory)
+# Chapter 06: Memory - Types, allocation strategies
+add_subdirectory(chapters/ch06_memory)
 
-# Episode 07: Push Constants - Small data transfer
-add_subdirectory(episodes/ep07_push_constants)
+# Chapter 07: Push Constants - Small data transfer
+add_subdirectory(chapters/ch07_push_constants)
 
-# Episode 08: Specialization Constants
-add_subdirectory(episodes/ep08_specialization)
+# Chapter 08: Specialization Constants
+add_subdirectory(chapters/ch08_specialization)
 
-# Episode 09: Subgroups - Wave/warp operations
-add_subdirectory(episodes/ep09_subgroups)
+# Chapter 09: Subgroups - Wave/warp operations
+add_subdirectory(chapters/ch09_subgroups)
 
-# Episode 10: Debugging - Validation, profiling
-add_subdirectory(episodes/ep10_debugging)
+# Chapter 10: Debugging - Validation, profiling
+add_subdirectory(chapters/ch10_debugging)
 
 # ============================================================================
 # Summary

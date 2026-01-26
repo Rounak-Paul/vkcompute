@@ -1,0 +1,66 @@
+/**
+ * Chapter 08: Specialization Constants Demo
+ * 
+ * Workgroup size, operation type, and unroll factor are set at pipeline creation.
+ * This allows the compiler to optimize for specific configurations.
+ */
+
+#version 450
+
+// Specialization constants - set at pipeline creation time
+layout(constant_id = 0) const uint WORKGROUP_SIZE = 256;
+layout(constant_id = 1) const uint OPERATION = 0;      // 0=add, 1=multiply, 2=fma
+layout(constant_id = 2) const uint UNROLL_FACTOR = 1;
+
+// Use specialization constant for workgroup size!
+layout(local_size_x_id = 0) in;
+
+layout(set = 0, binding = 0) readonly buffer BufferA {
+    float a[];
+};
+
+layout(set = 0, binding = 1) readonly buffer BufferB {
+    float b[];
+};
+
+layout(set = 0, binding = 2) writeonly buffer BufferC {
+    float c[];
+};
+
+layout(push_constant) uniform PushConstants {
+    float scale;
+};
+
+void main() {
+    uint idx = gl_GlobalInvocationID.x;
+    
+    float val_a = a[idx];
+    float val_b = b[idx];
+    float result;
+    
+    // Operation is a compile-time constant - unused branches are eliminated
+    if (OPERATION == 0) {
+        // Add: c = a + b
+        result = val_a + val_b;
+    } else if (OPERATION == 1) {
+        // Multiply: c = a * b
+        result = val_a * val_b;
+    } else if (OPERATION == 2) {
+        // FMA: c = a * scale + b
+        result = fma(val_a, scale, val_b);
+    } else {
+        result = val_a;
+    }
+    
+    // Unroll factor is compile-time constant
+    // In a real scenario, you'd process UNROLL_FACTOR elements per thread
+    // For demo purposes, we just show the concept
+    if (UNROLL_FACTOR > 1) {
+        // Compiler can optimize this loop since UNROLL_FACTOR is constant
+        for (uint i = 0; i < UNROLL_FACTOR; i++) {
+            result = result * 1.0;  // Placeholder for actual work
+        }
+    }
+    
+    c[idx] = result;
+}

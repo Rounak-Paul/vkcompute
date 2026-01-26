@@ -1,0 +1,49 @@
+/**
+ * Chapter 07: Transform shader using push constants
+ * Supports multiple operations selected via push constant
+ */
+
+#version 450
+
+layout(local_size_x = 256) in;
+
+// Push constants - small, fast to update
+layout(push_constant) uniform PushConstants {
+    float scale;
+    float offset;
+    float power;
+    uint operation;  // 0=linear, 1=polynomial, 2=sinusoidal
+};
+
+layout(set = 0, binding = 0) readonly buffer Input {
+    float input_data[];
+};
+
+layout(set = 0, binding = 1) writeonly buffer Output {
+    float output_data[];
+};
+
+void main() {
+    uint idx = gl_GlobalInvocationID.x;
+    float x = input_data[idx];
+    float result;
+    
+    switch (operation) {
+        case 0:  // Linear: scale * x + offset
+            result = scale * x + offset;
+            break;
+            
+        case 1:  // Polynomial: scale * x^power + offset
+            result = scale * pow(x, power) + offset;
+            break;
+            
+        case 2:  // Sinusoidal: scale * sin(x * 2π) + offset
+            result = scale * sin(x * 6.28318530718) + offset;
+            break;
+            
+        default:
+            result = x;
+    }
+    
+    output_data[idx] = result;
+}

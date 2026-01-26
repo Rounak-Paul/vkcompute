@@ -73,11 +73,11 @@ vkcompute/
 │       ├── vk_init.c
 │       ├── vk_utils.c
 │       └── file_utils.c
-├── episodes/               # Each video episode
-│   ├── ep01_hello_compute/ # Intro - no helper library
+├── chapters/               # Each video chapter
+│   ├── ch01_hello_compute/ # Intro - no helper library
 │   │   ├── CMakeLists.txt
 │   │   └── main.c
-│   ├── ep02_buffers/       # Uses vkc library
+│   ├── ch02_buffers/       # Uses vkc library
 │   │   ├── CMakeLists.txt
 │   │   ├── main.c
 │   │   └── shaders/
@@ -87,21 +87,21 @@ vkcompute/
         └── shaders/        # Compiled SPIR-V shaders
 ```
 
-## Running Episodes
+## Running Chapters
 
 After building, executables are in `build/bin/`:
 
 ```bash
 # Linux/macOS
-./build/bin/ep01_hello_compute
+./build/bin/ch01_hello_compute
 
 # Windows
-build\bin\Release\ep01_hello_compute.exe
+build\bin\Release\ch01_hello_compute.exe
 ```
 
-## Episode Guide
+## Chapter Guide
 
-| Episode | Topic | Description |
+| Chapter | Topic | Description |
 |---------|-------|-------------|
 | 01 | Hello Compute | Vulkan intro: instance, device, queues |
 | 02 | Buffers | Device/host memory, staging buffers |
@@ -114,29 +114,29 @@ build\bin\Release\ep01_hello_compute.exe
 | 09 | Subgroups | Wave/warp-level operations |
 | 10 | Debugging | Validation layers, profiling |
 
-## Adding New Episodes
+## Adding New Chapters
 
-1. Create a new directory: `episodes/epXX_topic_name/`
+1. Create a new directory: `chapters/chXX_topic_name/`
 2. Add `CMakeLists.txt`:
 ```cmake
-set(EPISODE_NAME epXX_topic_name)
+set(CHAPTER_NAME chXX_topic_name)
 
-add_executable(${EPISODE_NAME}
+add_executable(${CHAPTER_NAME}
     main.c
 )
 
-target_link_libraries(${EPISODE_NAME} PRIVATE
+target_link_libraries(${CHAPTER_NAME} PRIVATE
     vkc
 )
 
 set(SHADER_DIR ${CMAKE_CURRENT_SOURCE_DIR}/shaders)
-set(SHADER_OUTPUT_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/shaders/${EPISODE_NAME})
-compile_shaders(${EPISODE_NAME} ${SHADER_DIR} ${SHADER_OUTPUT_DIR})
+set(SHADER_OUTPUT_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/shaders/${CHAPTER_NAME})
+compile_shaders(${CHAPTER_NAME} ${SHADER_DIR} ${SHADER_OUTPUT_DIR})
 ```
 
 3. Uncomment in root `CMakeLists.txt`:
 ```cmake
-add_subdirectory(episodes/epXX_topic_name)
+add_subdirectory(chapters/chXX_topic_name)
 ```
 
 ## Common Library API

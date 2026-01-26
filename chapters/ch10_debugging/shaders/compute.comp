@@ -1,0 +1,29 @@
+/**
+ * Chapter 10: Simple double shader for debugging demo
+ * Reads from input, writes doubled value to output
+ */
+
+#version 450
+
+layout(local_size_x = 256) in;
+
+layout(set = 0, binding = 0) readonly buffer Input {
+    float input_data[];
+};
+
+layout(set = 0, binding = 1) buffer Output {
+    float output_data[];
+};
+
+void main() {
+    uint idx = gl_GlobalInvocationID.x;
+    
+    // Read from input, write doubled value
+    // Note: We read from output (previous pass result) if doing multiple passes
+    float value = output_data[idx];
+    if (value == 0.0) {
+        value = input_data[idx];  // First pass
+    }
+    
+    output_data[idx] = value * 2.0;
+}

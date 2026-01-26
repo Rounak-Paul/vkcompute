@@ -1,0 +1,33 @@
+/**
+ * VKCompute - Chapter 03: Descriptor Sets
+ * Transform: output = input * scale + offset
+ * Uses multiple descriptor sets for uniform and storage buffers
+ */
+
+#version 450
+
+layout(local_size_x = 256) in;
+
+// Set 0: Parameters (uniform buffer)
+layout(set = 0, binding = 0) uniform Params {
+    float scale;
+    float offset;
+    uint count;
+};
+
+// Set 1: Data buffers (storage buffers)
+layout(set = 1, binding = 0) readonly buffer InputBuffer {
+    float input_data[];
+};
+
+layout(set = 1, binding = 1) writeonly buffer OutputBuffer {
+    float output_data[];
+};
+
+void main() {
+    uint idx = gl_GlobalInvocationID.x;
+    
+    if (idx >= count) return;
+    
+    output_data[idx] = input_data[idx] * scale + offset;
+}
