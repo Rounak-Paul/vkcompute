@@ -1,0 +1,63 @@
+site_name: VKCompute Tutorial Series
+site_description: Learn Vulkan Compute from scratch with practical examples
+site_author: VKCompute
+site_url: https://rounak-paul.github.io/vkcompute/
+repo_url: https://github.com/Rounak-Paul/vkcompute
+repo_name: Rounak-Paul/vkcompute
+
+theme:
+  name: material
+  palette:
+    - scheme: slate
+      primary: deep purple
+      accent: amber
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+    - scheme: default
+      primary: deep purple
+      accent: amber
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+  features:
+    - content.code.copy
+    - content.code.annotate
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - toc.follow
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.inlinehilite
+  - admonition
+  - pymdownx.details
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Introduction: introduction.md
+    - Installation: installation.md
+  - Tutorials:
+    - Chapter 01 - Hello Compute: chapters/ch01_hello_compute.md
+    - Chapter 02 - Buffers: chapters/ch02_buffers.md
+    - Chapter 03 - Descriptors: chapters/ch03_descriptors.md
+    - Chapter 04 - Pipelines: chapters/ch04_pipelines.md
+    - Chapter 05 - Synchronization: chapters/ch05_synchronization.md
+    - Chapter 06 - Memory: chapters/ch06_memory.md
+    - Chapter 07 - Push Constants: chapters/ch07_push_constants.md
+    - Chapter 08 - Specialization: chapters/ch08_specialization.md
+    - Chapter 09 - Subgroups: chapters/ch09_subgroups.md
+    - Chapter 10 - Debugging: chapters/ch10_debugging.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/vkcompute
