@@ -145,7 +145,6 @@ int32_t vkc_find_compute_queue_family(VkPhysicalDevice device) {
     
     free(queue_families);
     
-    // Return dedicated compute queue if available, otherwise any compute queue
     return (dedicated_compute >= 0) ? dedicated_compute : compute_family;
 }
 

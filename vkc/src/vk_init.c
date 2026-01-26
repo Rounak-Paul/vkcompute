@@ -67,7 +67,6 @@ static VkResult create_instance(VkcContext* ctx, const VkcConfig* config) {
         .apiVersion = VK_API_VERSION_1_2
     };
     
-    // Extensions
     const char* extensions[8];
     uint32_t extension_count = 0;
     
@@ -87,7 +86,6 @@ static VkResult create_instance(VkcContext* ctx, const VkcConfig* config) {
     uint32_t layer_count = 0;
     
     if (config->enable_validation) {
-        // Check if validation layer is available
         uint32_t available_count;
         vkEnumerateInstanceLayerProperties(&available_count, NULL);
         
@@ -134,10 +132,10 @@ static VkResult create_instance(VkcContext* ctx, const VkcConfig* config) {
         VkDebugUtilsMessengerCreateInfoEXT debug_info = {
             .sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
             .messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
-                              VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT,
+                            VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT,
             .messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
-                          VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
-                          VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT,
+                        VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
+                        VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT,
             .pfnUserCallback = debug_callback
         };
         
@@ -177,7 +175,6 @@ static VkResult select_physical_device(VkcContext* ctx, const VkcConfig* config)
         VkPhysicalDeviceProperties props;
         vkGetPhysicalDeviceProperties(devices[i], &props);
         
-        // Check for compute queue
         int32_t compute_family = vkc_find_compute_queue_family(devices[i]);
         if (compute_family < 0) {
             continue;
@@ -314,7 +311,7 @@ VkResult vkc_create_command_pool(VkcContext* ctx, VkCommandPool* pool) {
 }
 
 VkResult vkc_create_command_buffer(VkcContext* ctx, VkCommandPool pool, 
-                                   VkCommandBuffer* cmd) {
+                                VkCommandBuffer* cmd) {
     VkCommandBufferAllocateInfo alloc_info = {
         .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
         .commandPool = pool,
@@ -357,9 +354,9 @@ VkResult vkc_create_fence(VkcContext* ctx, VkFence* fence, bool signaled) {
 // ============================================================================
 
 VkResult vkc_create_buffer(VkcContext* ctx, VkDeviceSize size,
-                           VkBufferUsageFlags usage,
-                           VkMemoryPropertyFlags mem_props,
-                           VkcBuffer* buffer) {
+                        VkBufferUsageFlags usage,
+                        VkMemoryPropertyFlags mem_props,
+                        VkcBuffer* buffer) {
     memset(buffer, 0, sizeof(VkcBuffer));
     buffer->size = size;
     
@@ -376,8 +373,8 @@ VkResult vkc_create_buffer(VkcContext* ctx, VkDeviceSize size,
     vkGetBufferMemoryRequirements(ctx->device, buffer->buffer, &mem_req);
     
     uint32_t mem_type = vkc_find_memory_type(ctx->physical_device, 
-                                              mem_req.memoryTypeBits, 
-                                              mem_props);
+                                            mem_req.memoryTypeBits, 
+                                            mem_props);
     
     VkMemoryAllocateInfo alloc_info = {
         .sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
@@ -420,7 +417,7 @@ void vkc_unmap_buffer(VkcContext* ctx, VkcBuffer* buffer) {
 }
 
 VkResult vkc_upload_buffer(VkcContext* ctx, VkcBuffer* buffer, 
-                           const void* data, VkDeviceSize size) {
+                        const void* data, VkDeviceSize size) {
     void* mapped;
     VK_CHECK_RETURN(vkc_map_buffer(ctx, buffer, &mapped));
     memcpy(mapped, data, (size_t)size);
@@ -429,7 +426,7 @@ VkResult vkc_upload_buffer(VkcContext* ctx, VkcBuffer* buffer,
 }
 
 VkResult vkc_download_buffer(VkcContext* ctx, VkcBuffer* buffer,
-                             void* data, VkDeviceSize size) {
+                            void* data, VkDeviceSize size) {
     void* mapped;
     VK_CHECK_RETURN(vkc_map_buffer(ctx, buffer, &mapped));
     memcpy(data, mapped, (size_t)size);
@@ -442,7 +439,7 @@ VkResult vkc_download_buffer(VkcContext* ctx, VkcBuffer* buffer,
 // ============================================================================
 
 VkResult vkc_load_shader(VkcContext* ctx, const char* filepath,
-                         VkShaderModule* shader) {
+                        VkShaderModule* shader) {
     size_t code_size;
     uint32_t* code = vkc_read_spirv(filepath, &code_size);
     
@@ -464,9 +461,9 @@ VkResult vkc_load_shader(VkcContext* ctx, const char* filepath,
 }
 
 VkResult vkc_create_compute_pipeline(VkcContext* ctx,
-                                     VkShaderModule shader,
-                                     VkPipelineLayout layout,
-                                     VkPipeline* pipeline) {
+                                    VkShaderModule shader,
+                                    VkPipelineLayout layout,
+                                    VkPipeline* pipeline) {
     VkPipelineShaderStageCreateInfo stage_info = {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
         .stage = VK_SHADER_STAGE_COMPUTE_BIT,

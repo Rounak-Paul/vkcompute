@@ -63,7 +63,7 @@ vkcompute/
 ├── CMakeLists.txt          # Root CMake configuration
 ├── build.sh                # Linux/macOS build script
 ├── build.bat               # Windows build script
-├── common/                 # Shared utility library
+├── vkc/                    # Shared utility library
 │   ├── CMakeLists.txt
 │   ├── include/
 │   │   ├── vk_init.h       # Vulkan initialization
@@ -74,12 +74,13 @@ vkcompute/
 │       ├── vk_utils.c
 │       └── file_utils.c
 ├── episodes/               # Each video episode
-│   ├── ep01_hello_compute/
+│   ├── ep01_hello_compute/ # Intro - no helper library
+│   │   ├── CMakeLists.txt
+│   │   └── main.c
+│   ├── ep02_buffers/       # Uses vkc library
 │   │   ├── CMakeLists.txt
 │   │   ├── main.c
 │   │   └── shaders/
-│   │       └── double.comp
-│   ├── ep02_buffers/       # (future)
 │   └── ...
 └── build/                  # Build output (generated)
     └── bin/                # Executables
@@ -102,7 +103,7 @@ build\bin\Release\ep01_hello_compute.exe
 
 | Episode | Topic | Description |
 |---------|-------|-------------|
-| 01 | Hello Compute | First compute shader, buffers, dispatch |
+| 01 | Hello Compute | Vulkan intro: instance, device, queues |
 | 02 | Buffers | Device/host memory, staging buffers |
 | 03 | Descriptors | Descriptor sets, layouts, pools |
 | 04 | Pipelines | Pipeline caching, specialization |
