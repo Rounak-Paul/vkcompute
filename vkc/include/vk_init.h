@@ -47,27 +47,21 @@ typedef struct VkcContext {
     bool validation_enabled;
 } VkcContext;
 
-// Initialize Vulkan context
 VkResult vkc_init(VkcContext* ctx, const VkcConfig* config);
 
-// Cleanup Vulkan context
 void vkc_cleanup(VkcContext* ctx);
 
 // ============================================================================
 // Helper functions
 // ============================================================================
 
-// Create a compute command pool
 VkResult vkc_create_command_pool(VkcContext* ctx, VkCommandPool* pool);
 
-// Create a command buffer
 VkResult vkc_create_command_buffer(VkcContext* ctx, VkCommandPool pool, 
-                                   VkCommandBuffer* cmd);
+                                VkCommandBuffer* cmd);
 
-// Submit command buffer and wait
 VkResult vkc_submit_and_wait(VkcContext* ctx, VkCommandBuffer cmd);
 
-// Create a fence
 VkResult vkc_create_fence(VkcContext* ctx, VkFence* fence, bool signaled);
 
 // ============================================================================
@@ -81,28 +75,22 @@ typedef struct VkcBuffer {
     void* mapped;  // Non-null if persistently mapped
 } VkcBuffer;
 
-// Create a buffer with memory
 VkResult vkc_create_buffer(VkcContext* ctx, VkDeviceSize size,
-                           VkBufferUsageFlags usage,
-                           VkMemoryPropertyFlags mem_props,
-                           VkcBuffer* buffer);
+                        VkBufferUsageFlags usage,
+                        VkMemoryPropertyFlags mem_props,
+                        VkcBuffer* buffer);
 
-// Destroy a buffer
 void vkc_destroy_buffer(VkcContext* ctx, VkcBuffer* buffer);
 
-// Map buffer memory
 VkResult vkc_map_buffer(VkcContext* ctx, VkcBuffer* buffer, void** data);
 
-// Unmap buffer memory
 void vkc_unmap_buffer(VkcContext* ctx, VkcBuffer* buffer);
 
-// Copy data to buffer
 VkResult vkc_upload_buffer(VkcContext* ctx, VkcBuffer* buffer, 
-                           const void* data, VkDeviceSize size);
+                        const void* data, VkDeviceSize size);
 
-// Copy data from buffer
 VkResult vkc_download_buffer(VkcContext* ctx, VkcBuffer* buffer,
-                             void* data, VkDeviceSize size);
+                            void* data, VkDeviceSize size);
 
 // ============================================================================
 // Shader helpers
@@ -110,9 +98,8 @@ VkResult vkc_download_buffer(VkcContext* ctx, VkcBuffer* buffer,
 
 // Load SPIR-V shader from file
 VkResult vkc_load_shader(VkcContext* ctx, const char* filepath,
-                         VkShaderModule* shader);
+                        VkShaderModule* shader);
 
-// Create compute pipeline
 VkResult vkc_create_compute_pipeline(VkcContext* ctx,
                                      VkShaderModule shader,
                                      VkPipelineLayout layout,

@@ -18,10 +18,8 @@ extern "C" {
 // Error handling macros
 // ============================================================================
 
-// Convert VkResult to string
 const char* vkc_result_string(VkResult result);
 
-// Check VkResult and print error
 #define VK_CHECK(call) \
     do { \
         VkResult result = (call); \
@@ -32,7 +30,6 @@ const char* vkc_result_string(VkResult result);
         } \
     } while(0)
 
-// Check VkResult and return on error
 #define VK_CHECK_RETURN(call) \
     do { \
         VkResult result = (call); \
@@ -67,15 +64,12 @@ const char* vkc_result_string(VkResult result);
 // Utility functions
 // ============================================================================
 
-// Find memory type index
 uint32_t vkc_find_memory_type(VkPhysicalDevice physical_device,
                               uint32_t type_filter,
                               VkMemoryPropertyFlags properties);
 
-// Print device info
 void vkc_print_device_info(VkPhysicalDevice device);
 
-// Get queue family index for compute
 int32_t vkc_find_compute_queue_family(VkPhysicalDevice device);
 
 // ============================================================================
@@ -96,7 +90,6 @@ static inline uint32_t vkc_align_up(uint32_t value, uint32_t alignment) {
 // Cross-platform timer
 // ============================================================================
 
-// Get high-resolution time in milliseconds
 double vkc_get_time_ms(void);
 
 #ifdef __cplusplus

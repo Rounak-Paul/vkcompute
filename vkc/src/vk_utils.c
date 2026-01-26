@@ -1,5 +1,5 @@
 /**
- * VKCompute - Vulkan Compute Video Series
+ * VKCompute 
  * Utility functions implementation
  */
 
@@ -56,8 +56,8 @@ const char* vkc_result_string(VkResult result) {
 // ============================================================================
 
 uint32_t vkc_find_memory_type(VkPhysicalDevice physical_device,
-                              uint32_t type_filter,
-                              VkMemoryPropertyFlags properties) {
+                            uint32_t type_filter,
+                            VkMemoryPropertyFlags properties) {
     VkPhysicalDeviceMemoryProperties mem_props;
     vkGetPhysicalDeviceMemoryProperties(physical_device, &mem_props);
     
@@ -93,28 +93,28 @@ void vkc_print_device_info(VkPhysicalDevice device) {
     VKC_LOG_INFO("  Name: %s", props.deviceName);
     VKC_LOG_INFO("  Type: %s", device_type);
     VKC_LOG_INFO("  API Version: %d.%d.%d",
-                 VK_API_VERSION_MAJOR(props.apiVersion),
-                 VK_API_VERSION_MINOR(props.apiVersion),
-                 VK_API_VERSION_PATCH(props.apiVersion));
+                VK_API_VERSION_MAJOR(props.apiVersion),
+                VK_API_VERSION_MINOR(props.apiVersion),
+                VK_API_VERSION_PATCH(props.apiVersion));
     VKC_LOG_INFO("  Driver Version: %d.%d.%d",
-                 VK_API_VERSION_MAJOR(props.driverVersion),
-                 VK_API_VERSION_MINOR(props.driverVersion),
-                 VK_API_VERSION_PATCH(props.driverVersion));
+                VK_API_VERSION_MAJOR(props.driverVersion),
+                VK_API_VERSION_MINOR(props.driverVersion),
+                VK_API_VERSION_PATCH(props.driverVersion));
     
     // Compute limits
     VKC_LOG_INFO("=== Compute Limits ===");
     VKC_LOG_INFO("  Max Compute Workgroup Count: [%u, %u, %u]",
-                 props.limits.maxComputeWorkGroupCount[0],
-                 props.limits.maxComputeWorkGroupCount[1],
-                 props.limits.maxComputeWorkGroupCount[2]);
+                props.limits.maxComputeWorkGroupCount[0],
+                props.limits.maxComputeWorkGroupCount[1],
+                props.limits.maxComputeWorkGroupCount[2]);
     VKC_LOG_INFO("  Max Compute Workgroup Size: [%u, %u, %u]",
-                 props.limits.maxComputeWorkGroupSize[0],
-                 props.limits.maxComputeWorkGroupSize[1],
-                 props.limits.maxComputeWorkGroupSize[2]);
+                props.limits.maxComputeWorkGroupSize[0],
+                props.limits.maxComputeWorkGroupSize[1],
+                props.limits.maxComputeWorkGroupSize[2]);
     VKC_LOG_INFO("  Max Compute Workgroup Invocations: %u",
-                 props.limits.maxComputeWorkGroupInvocations);
+                props.limits.maxComputeWorkGroupInvocations);
     VKC_LOG_INFO("  Max Compute Shared Memory: %u bytes",
-                 props.limits.maxComputeSharedMemorySize);
+                props.limits.maxComputeSharedMemorySize);
 }
 
 // ============================================================================
