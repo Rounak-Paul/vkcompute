@@ -248,9 +248,9 @@ Pipeline creation time: 12.3 ms
 
 Running pipeline chain: (input + 10) * 2
 First 5 results:
-  [0] (1.0 + 10.0) * 2.0 = 22.0 (got 22.0) ✓
-  [1] (2.0 + 10.0) * 2.0 = 24.0 (got 24.0) ✓
-  [2] (3.0 + 10.0) * 2.0 = 26.0 (got 26.0) ✓
+  [0] (1.0 + 10.0) * 2.0 = 22.0 (got 22.0) [ok]
+  [1] (2.0 + 10.0) * 2.0 = 24.0 (got 24.0) [ok]
+  [2] (3.0 + 10.0) * 2.0 = 26.0 (got 26.0) [ok]
 ```
 
 ## Pipeline Derivatives

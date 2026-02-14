@@ -299,7 +299,7 @@ int main(int argc, char* argv[]) {
             default:          expected = 0; break;
         }
         printf("    Verify: result[0] = %.1f (expected %.1f) %s\n", 
-               output_result[0], expected, output_result[0] == expected ? "✓" : "✗");
+               output_result[0], expected, output_result[0] == expected ? "[ok]" : "✗");
     }
     
     // ========================================================================

@@ -340,7 +340,7 @@ int main(int argc, char* argv[]) {
         float expected = (input_data[i] + add_val) * mul_val;
         printf("  [%d] (%.1f + %.1f) * %.1f = %.1f (got %.1f) %s\n", 
                i, input_data[i], add_val, mul_val, expected, chain_data[i],
-               chain_data[i] == expected ? "✓" : "✗");
+               chain_data[i] == expected ? "[ok]" : "✗");
     }
     
     // Cleanup

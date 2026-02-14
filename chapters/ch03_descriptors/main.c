@@ -295,7 +295,7 @@ int main(int argc, char* argv[]) {
         float expected = input_data[i] * params.scale + params.offset;
         printf("  %d * %.1f + %.1f = %.1f (got %.1f) %s\n", 
                i, params.scale, params.offset, expected, output_data[i],
-               (output_data[i] == expected) ? "✓" : "✗");
+               (output_data[i] == expected) ? "[ok]" : "✗");
     }
     
     bool success = true;
@@ -308,7 +308,7 @@ int main(int argc, char* argv[]) {
     }
     
     if (success) {
-        printf("\n✓ All %d values correct!\n", ARRAY_SIZE);
+        printf("\n[ok] All %d values correct!\n", ARRAY_SIZE);
     }
     
     // ========================================================================
@@ -339,7 +339,7 @@ int main(int argc, char* argv[]) {
         float expected = input_data[i] * params.scale + params.offset;
         printf("  %d * %.1f + %.1f = %.1f (got %.1f) %s\n", 
                i, params.scale, params.offset, expected, output_data[i],
-               (output_data[i] == expected) ? "✓" : "✗");
+               (output_data[i] == expected) ? "[ok]" : "✗");
     }
     
     // Cleanup

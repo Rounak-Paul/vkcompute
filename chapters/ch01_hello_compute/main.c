@@ -64,7 +64,7 @@ int main(int argc, char* argv[]) {
         fprintf(stderr, "Failed to create Vulkan instance! Error: %d\n", result);
         return 1;
     }
-    printf("✓ Vulkan instance created\n");
+    printf("[ok] Vulkan instance created\n");
     
     // ========================================================================
     // Step 2: Find a Physical Device (GPU)
@@ -79,7 +79,7 @@ int main(int argc, char* argv[]) {
         vkDestroyInstance(instance, NULL);
         return 1;
     }
-    printf("✓ Found %u GPU(s)\n", device_count);
+    printf("[ok] Found %u GPU(s)\n", device_count);
     
     VkPhysicalDevice* devices = malloc(device_count * sizeof(VkPhysicalDevice));
     vkEnumeratePhysicalDevices(instance, &device_count, devices);
@@ -133,7 +133,7 @@ int main(int argc, char* argv[]) {
         vkDestroyInstance(instance, NULL);
         return 1;
     }
-    printf("\n✓ Selected GPU with compute queue family %u\n", compute_queue_family);
+    printf("\n[ok] Selected GPU with compute queue family %u\n", compute_queue_family);
     
     // ========================================================================
     // Step 3: Create a Logical Device
@@ -162,7 +162,7 @@ int main(int argc, char* argv[]) {
         vkDestroyInstance(instance, NULL);
         return 1;
     }
-    printf("✓ Logical device created\n");
+    printf("[ok] Logical device created\n");
     
     // ========================================================================
     // Step 4: Get the Compute Queue
@@ -171,7 +171,7 @@ int main(int argc, char* argv[]) {
     
     VkQueue compute_queue;
     vkGetDeviceQueue(device, compute_queue_family, 0, &compute_queue);
-    printf("✓ Compute queue retrieved\n");
+    printf("[ok] Compute queue retrieved\n");
     
     // ========================================================================
     // Done! We have a working Vulkan setup.
@@ -186,7 +186,7 @@ int main(int argc, char* argv[]) {
     
     vkDestroyDevice(device, NULL);
     vkDestroyInstance(instance, NULL);
-    printf("\n✓ Cleanup complete\n");
+    printf("\n[ok] Cleanup complete\n");
     
     printf("\n=== What we learned ===\n");
     printf("1. Create a Vulkan instance (our connection to Vulkan)\n");

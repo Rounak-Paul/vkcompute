@@ -262,7 +262,7 @@ int main(int argc, char* argv[]) {
     printf("\n=== Results ===\n");
     printf("Computed sum: %.0f\n", result);
     printf("Expected sum: %.0f\n", expected_sum);
-    printf("Match: %s\n", (result == expected_sum) ? "✓ YES" : "✗ NO");
+    printf("Match: %s\n", (result == expected_sum) ? "[ok] YES" : "✗ NO");
     printf("Time: %.3f ms\n", elapsed);
     
     // ========================================================================

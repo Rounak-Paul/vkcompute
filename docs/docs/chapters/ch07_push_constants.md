@@ -180,9 +180,9 @@ Running transform: output = input * scale + offset
   scale = 2.0, offset = 10.0
 
 Results:
-  input[0] = 0.0 -> output = 10.0 ✓
-  input[1] = 1.0 -> output = 12.0 ✓
-  input[2] = 2.0 -> output = 14.0 ✓
+  input[0] = 0.0 -> output = 10.0 [ok]
+  input[1] = 1.0 -> output = 12.0 [ok]
+  input[2] = 2.0 -> output = 14.0 [ok]
 
 === Performance Comparison ===
 Running 1000 iterations...

@@ -26,7 +26,7 @@ CPU                          GPU
  │   (WRONG!)                 │
  │                            ├── Done
  ├── Wait for fence ◀─────────┤
- ├── Read results ✓           │
+ ├── Read results [ok]           │
 ```
 
 Without synchronization:
@@ -255,7 +255,7 @@ Running 3 sequential operations with barriers...
   Operation 2: double
   [barrier]
   Operation 3: square
-Result: (1 + 1) * 2 = 4, 4² = 16 ✓
+Result: (1 + 1) * 2 = 4, 4² = 16 [ok]
 
 === Part 3: Multiple Submissions ===
 Submitting 3 independent operations...

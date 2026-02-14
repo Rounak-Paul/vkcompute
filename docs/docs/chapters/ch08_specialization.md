@@ -199,11 +199,11 @@ Creating shader variants...
 Testing variants:
 Input: a[5] = 5.0, b[5] = 100.0, scale = 2.0
 
-  Add, WG=64:    result[5] = 105.0 ✓
-  Add, WG=256:   result[5] = 105.0 ✓
-  Add, WG=512:   result[5] = 105.0 ✓
-  Multiply:      result[5] = 200.0 ✓
-  FMA:           result[5] = 11.0 ✓
+  Add, WG=64:    result[5] = 105.0 [ok]
+  Add, WG=256:   result[5] = 105.0 [ok]
+  Add, WG=512:   result[5] = 105.0 [ok]
+  Multiply:      result[5] = 200.0 [ok]
+  FMA:           result[5] = 11.0 [ok]
 
 === Performance by Workgroup Size ===
   WG=64:  0.42 ms

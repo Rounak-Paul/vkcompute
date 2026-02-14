@@ -358,7 +358,7 @@ int main(int argc, char* argv[]) {
         float expected = input_data[i] * 4.0f;
         printf("  [%d] %.1f -> %.1f (expected %.1f) %s\n",
                i, input_data[i], output_data[i], expected,
-               output_data[i] == expected ? "✓" : "✗");
+               output_data[i] == expected ? "[ok]" : "✗");
         if (output_data[i] != expected) success = false;
     }
     

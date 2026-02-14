@@ -66,7 +66,7 @@ vulkaninfo | head -20
 ### Clone the Repository
 
 ```bash
-git clone https://github.com/vkcompute/vkcompute.git
+git clone https://github.com/Rounak-Paul/vkcompute.git
 cd vkcompute
 ```
 
@@ -114,16 +114,16 @@ You should see output like:
   VKCompute - Chapter 01: Hello Vulkan Compute
 ==============================================
 
-✓ Vulkan instance created
-✓ Found 1 GPU(s)
+[ok] Vulkan instance created
+[ok] Found 1 GPU(s)
 
   GPU 0: NVIDIA GeForce RTX 3080
     Type: Discrete GPU
     API Version: 1.3.277
     ...
 
-✓ Logical device created
-✓ Compute queue retrieved
+[ok] Logical device created
+[ok] Compute queue retrieved
 
 === SUCCESS ===
 Vulkan is initialized and ready for compute work!
@@ -158,24 +158,6 @@ Ensure `glslc` (from the Vulkan SDK) is in your PATH:
 ```bash
 which glslc  # Should show path to glslc
 ```
-
-## IDE Setup
-
-### Visual Studio Code
-
-Install these extensions:
-
-- **C/C++** (Microsoft)
-- **CMake Tools** (Microsoft)
-- **Shader languages support** for GLSL syntax highlighting
-
-### CLion
-
-CMake projects are natively supported. Just open the project folder.
-
-### Visual Studio
-
-Use "Open Folder" and select the project root. Visual Studio will detect CMakeLists.txt automatically.
 
 ## Next Steps
 

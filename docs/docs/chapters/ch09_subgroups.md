@@ -241,7 +241,7 @@ Array size: 1,048,576 elements
 Expected sum: 549755289600.0
 
 Results:
-  Computed sum: 549755289600.0 ✓
+  Computed sum: 549755289600.0 [ok]
   Time: 2.89 ms
   Throughput: 3.34 GB/s
   Elements/second: 0.90 billion
