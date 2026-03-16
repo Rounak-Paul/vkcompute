@@ -1,15 +1,5 @@
 /**
  * VKCompute - Chapter 01: Hello Vulkan Compute
- * 
- * Introduction to Vulkan compute programming.
- * 
- * This chapter covers the basics:
- * 1. What is Vulkan?
- * 2. Creating a Vulkan instance
- * 3. Selecting a GPU (physical device)
- * 4. Creating a logical device with a compute queue
- * 
- * No shaders yet - just getting Vulkan up and running!
  */
 
 #include <stdio.h>
@@ -27,8 +17,6 @@ int main(int argc, char* argv[]) {
     // ========================================================================
     // Step 1: Create a Vulkan Instance
     // ========================================================================
-    // The instance is our connection to the Vulkan library.
-    // We need to tell Vulkan about our application.
     
     VkApplicationInfo app_info = {
         .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
@@ -69,7 +57,6 @@ int main(int argc, char* argv[]) {
     // ========================================================================
     // Step 2: Find a Physical Device (GPU)
     // ========================================================================
-    // Enumerate available GPUs and pick one that supports compute.
     
     uint32_t device_count = 0;
     vkEnumeratePhysicalDevices(instance, &device_count, NULL);
@@ -138,8 +125,6 @@ int main(int argc, char* argv[]) {
     // ========================================================================
     // Step 3: Create a Logical Device
     // ========================================================================
-    // The logical device is our interface to the GPU.
-    // We request a queue from the compute-capable queue family.
     
     float queue_priority = 1.0f;
     VkDeviceQueueCreateInfo queue_info = {
@@ -167,7 +152,6 @@ int main(int argc, char* argv[]) {
     // ========================================================================
     // Step 4: Get the Compute Queue
     // ========================================================================
-    // Now we can retrieve the queue we requested.
     
     VkQueue compute_queue;
     vkGetDeviceQueue(device, compute_queue_family, 0, &compute_queue);
