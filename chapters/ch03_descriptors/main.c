@@ -308,7 +308,7 @@ int main(int argc, char* argv[]) {
     }
     
     if (success) {
-        printf("\n[ok] All %d values correct!\n", ARRAY_SIZE);
+        printf("\nAll %d values correct!\n", ARRAY_SIZE);
     }
     
     // ========================================================================

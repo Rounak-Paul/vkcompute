@@ -53,7 +53,7 @@ if (result != VK_SUCCESS) {
     fprintf(stderr, "Failed to create Vulkan instance!\n");
     return 1;
 }
-printf("[ok] Vulkan instance created\n");
+printf("Vulkan instance created\n");
 ```
 
 !!! note "sType Pattern"
@@ -159,7 +159,7 @@ result = vkCreateDevice(physical_device, &device_info, NULL, &device);
 ```c
 VkQueue compute_queue;
 vkGetDeviceQueue(device, compute_queue_family, 0, &compute_queue);
-printf("[ok] Compute queue retrieved\n");
+printf("Compute queue retrieved\n");
 ```
 
 Now we have everything needed to submit compute work!
@@ -185,17 +185,17 @@ Expected output:
   VKCompute - Chapter 01: Hello Vulkan Compute
 ==============================================
 
-[ok] Vulkan instance created
-[ok] Found 1 GPU(s)
+Vulkan instance created
+Found 1 GPU(s)
 
   GPU 0: NVIDIA GeForce RTX 3080
     Type: Discrete GPU
     API Version: 1.3.277
     Queue family 0: supports COMPUTE (16 queues)
 
-[ok] Selected GPU with compute queue family 0
-[ok] Logical device created
-[ok] Compute queue retrieved
+Selected GPU with compute queue family 0
+Logical device created
+Compute queue retrieved
 
 === SUCCESS ===
 Vulkan is initialized and ready for compute work!

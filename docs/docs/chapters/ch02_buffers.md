@@ -299,7 +299,7 @@ First 5 values:
   3² = 9 (expected 9)
   4² = 16 (expected 16)
 
-[ok] All 1048576 values computed correctly!
+All 1048576 values computed correctly!
 ```
 
 ## Performance Considerations

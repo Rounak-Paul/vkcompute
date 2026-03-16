@@ -114,16 +114,16 @@ You should see output like:
   VKCompute - Chapter 01: Hello Vulkan Compute
 ==============================================
 
-[ok] Vulkan instance created
-[ok] Found 1 GPU(s)
+Vulkan instance created
+Found 1 GPU(s)
 
   GPU 0: NVIDIA GeForce RTX 3080
     Type: Discrete GPU
     API Version: 1.3.277
     ...
 
-[ok] Logical device created
-[ok] Compute queue retrieved
+Logical device created
+Compute queue retrieved
 
 === SUCCESS ===
 Vulkan is initialized and ready for compute work!

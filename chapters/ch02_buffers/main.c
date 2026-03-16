@@ -299,7 +299,7 @@ int main(int argc, char* argv[]) {
     }
     
     if (success) {
-        printf("\n[ok] All %d values computed correctly!\n", ARRAY_SIZE);
+        printf("\nAll %d values computed correctly!\n", ARRAY_SIZE);
     }
     
     // Cleanup

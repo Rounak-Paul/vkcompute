@@ -26,7 +26,7 @@ CPU                          GPU
  │   (WRONG!)                 │
  │                            ├── Done
  ├── Wait for fence ◀─────────┤
- ├── Read results [ok]           │
+ ├── Read results           │
 ```
 
 Without synchronization:
