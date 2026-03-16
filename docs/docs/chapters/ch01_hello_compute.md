@@ -8,12 +8,6 @@ In this chapter, you'll create your first Vulkan program. We won't run any compu
 - Enumerate and select a GPU
 - Create a logical device with a compute queue
 
-**What you'll learn:**
-
-- The Vulkan object hierarchy
-- Physical vs logical devices
-- Queue families and compute capability
-
 ## The Code
 
 Let's walk through the complete program:
@@ -57,7 +51,7 @@ printf("Vulkan instance created\n");
 ```
 
 !!! note "sType Pattern"
-    Every Vulkan structure has an `sType` field that identifies its type. This enables the driver to validate and extend structures.
+    Every Vulkan structure has an `sType` field that identifies its structure type. This enables the driver to validate and extend structures.
 
 !!! warning "macOS Note"
     On macOS with MoltenVK, you need the portability extension. The full code handles this with `#ifdef __APPLE__`.
